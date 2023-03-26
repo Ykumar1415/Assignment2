@@ -2,40 +2,60 @@ import React from "react";
 import "./table.css";
 import { useState } from "react";
 import axios from "axios";
-function tablerows({ row, Array, setArray, handleDelete, handleUpdate  }) {
+import {
+  BarLoader,
+  DoubleBubble,
+  SlidingPebbles,DoubleOrbit,HalfMalf
+} from "react-spinner-animated";
+function tablerow1s({ row, sendarray, setsendarray  }) {
   const [update, setupdate] = useState(true);
-
+  const [row1, setrow1] = useState(row);
+  const [loading, setLoading] = useState(false);
+ 
+ console.log(row1)
   return (
-    <div>
-      <tr key={row.id}>
+    <div key={row1._id}>
+      {loading ? (
+        <div style = {{   diaplay : "flex", justifyContent : "center", alignItems:"center",   marginLeft:"40%"}}>
+        <HalfMalf
+          text={"Loading..."}
+          bgColor={"white"}
+          color={"white"}
+          center={false}
+          width={"150px"}
+          height={"150px"}
+        /></div>
+      ) : (
+      <tr >
         <td>
-          <input type="checkbox" className="checkbox" onChange = {()=>{
-            if(document.querySelector('.checkbox').checked){
-              setArray([...Array, row])
+          <input
+            type="checkbox"
+            className="checkbox"
+            onChange={() => {
+              console.log(sendarray)
+              setsendarray([...sendarray, row1._id]); 
+              console.log(row1)
+            }}
+          />
+        </td>
+        <td>{}</td>
+        <td>
+          <input
+            type="text"
+            value={row1.id}
+            disabled={true}
+            onChange={(event) =>
+              setrow1({...row1, id : event.target.value})
               
-            }else{
-              setArray(Array.filter((item) => item.id !== row.id))
-
-            }
-          }}/>
-        </td>
-        <td>{row.id}</td>
-        <td>
-          <input
-            type="text"
-            value={row.name}
-            disabled={update}
-            onChange={(event) =>
-              handleUpdate(row.id, "name", event.target.value)
             }
           />
         </td>
         <td>
           <input
             type="text"
-            value={row.phone}
+            value={row1.name}
             onChange={(event) =>
-              handleUpdate(row.id, "phone", event.target.value)
+              setrow1({...row1 , name: event.target.value})
             }
             disabled={update}
           />
@@ -43,9 +63,9 @@ function tablerows({ row, Array, setArray, handleDelete, handleUpdate  }) {
         <td>
           <input
             type="text"
-            value={row.email}
+            value={row1.phone}
             onChange={(event) =>
-              handleUpdate(row.id, "email", event.target.value)
+              setrow1({...row1 , phone : event.target.value})
             }
             disabled={update}
           />
@@ -53,9 +73,9 @@ function tablerows({ row, Array, setArray, handleDelete, handleUpdate  }) {
         <td>
           <input
             type="text"
-            value={row.email}
+            value={row1.email}
             onChange={(event) =>
-              handleUpdate(row.id, "email", event.target.value)
+               setrow1({...row1 ,  email : event.target.value})
             }
             disabled={update}
           />
@@ -64,36 +84,41 @@ function tablerows({ row, Array, setArray, handleDelete, handleUpdate  }) {
         <td>
           <input
             type="text"
-            value={row.hobbies}
+            value={row1.hobbies}
             onChange={(event) =>
-              handleUpdate(row.id, "hobbies", event.target.value)
+              setrow1({row1 ,  hobbies : event.target.value})
             }
             disabled={update}
           />
         </td>
         <td>
           <button
-            onClick={() => {
-              setupdate(!update);
-              if (update) {
+            onClick={async () => {
+              await setupdate(!update);
+              
+              if (!update) {
                 if (
-                  row.name === "" ||
-                  row.phone === "" ||
-                  row.email === "" ||
-                  row.hobbies === ""
+                  row1.name === "" ||
+                  row1.phone === "" ||
+                  row1.email === "" ||
+                  row1.hobbies === ""
                 ) {
                   alert("Please fill all the fields");
                 } else {
-                  axios
-                    .post(`http://localhost:3001/data/:${row._id}`, {
-                      id: row.id,
-                      name: row.name,
-                      phone: row.phone,
-                      email: row.email,
-                      hobbies: row.hobbies,
+                console.log(row1)
+                setLoading(true)
+                await   axios
+                    .put(`http://localhost:3000/data/${row1._id}`, {
+                      id: row1._id,
+                      name: row1.name,
+                      phone: row1.phone,
+                      email: row1.email,
+                      hobbies: row1.hobbies,
                     })
                     .then(() => {
                       alert("success");
+                      setLoading(false)
+                       window.location.reload();
                     });
                 }
               }
@@ -102,26 +127,30 @@ function tablerows({ row, Array, setArray, handleDelete, handleUpdate  }) {
             {!update ? "Update" : "Edit"}
           </button>
           <button
-            onClick={() =>
-             { axios
-                .post(`http://localhost:3000/data/:${row._id}`, {
-                  id: row.id,
-                  name: row.name,
-                  phone: row.phone,
-                  email: row.email,
-                  hobbies: row.hobbies,
+            onClick={() => {
+              setLoading(true)
+              axios
+                .delete(`http://localhost:3000/data/delete/${row1._id}`, {
+                  
+                  name: row1.name,
+                  phone: row1.phone,
+                  email: row1.email,
+                  hobbies: row1.hobbies,
                 })
                 .then(() => {
                   alert("success");
-                })
+                  setLoading(false)
+                  window.location.reload();
+                });
             }}
           >
             Delete
           </button>
         </td>
-      </tr>{" "}
+      </tr> 
+      )}
     </div>
   );
 }
 
-export default tablerows;
+export default tablerow1s;

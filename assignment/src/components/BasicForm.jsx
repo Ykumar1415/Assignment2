@@ -2,18 +2,35 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./Form.css";
 
-const Form = ({ change, setchange}) => {
+const Form = ({ change, setchange,rows }) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [hobbies, setHobbies] = useState("");
   const [error, setError] = useState("");
-
+// console.log(rows.length)
   const handleSubmit = async (e) => {
-    console.log("hello");
+    // console.log("hello");
     e.preventDefault();
+    // length of array in js 
+    if(phone.length > 10){
+      alert("phone number should be less than 10 digits");
+      return ; 
+    }
+    if(phone.length < 10){
+      alert("phone number should be greater than 10 digits");
+      return ; 
+    }
+   for(let i = 0; i < phone.length; i++){
+      if(phone[i] < 0 || phone[i] > 9){
+        alert("phone number should contain only digits");
+        return ; 
+      }
+    }
+   
     axios
       .post("http://localhost:3000/create", {
+        id:  rows.length >0 ? rows.length + 1 : 1,
         name: name,
         phone: phone,
         email: email,
@@ -25,7 +42,7 @@ const Form = ({ change, setchange}) => {
         window.location.reload();
       }).catch((err) => {
         console.log(err);
-        alert("error occured ");
+        // alert(err);
       });
     // Authenticate with Firebase here
     // firebase

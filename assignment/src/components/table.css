@@ -6,6 +6,9 @@
   flex: 1;
   justify-content: center;
 }
+*{
+  overflow: hidden;
+}
 
 input {
   height: 2rem;
