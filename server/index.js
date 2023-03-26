@@ -11,9 +11,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+require('dotenv').config();
 // Connect to MongoDB
 mongoose
-  .connect("mongodb+srv://Yk:123@cluster0.zelqca0.mongodb.net/?retryWrites=true&w=majority", {
+  .connect(process.env.mongouri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -171,7 +172,7 @@ app.post("/send-email", async (req, res) => {
     });
     var mailOptions = {
       from: '"Yogesh Saini" <YORG153@outlook.com>', // sender address
-      to: "yogeshsaini1415@gmail.com", // list of receivers
+      to: "email", // list of receivers
       subject: "Data",
       template: "You are successfully Got data", // the name of the template file i.e email.handlebars
       // text:  `Name: ${data[0].name} Phone: ${data[0].phone} Email: ${data[0].email} Hobbies: ${data[0].hobbies}`,
